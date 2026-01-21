@@ -1,125 +1,151 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="theme-color" content="#060a18"/>
-<link rel="stylesheet" href="assets/style.css"/>
-<title>Vote & Nominate</title></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="theme-color" content="#060a18"/>
+  <link rel="stylesheet" href="assets/style.css"/>
+  <title>Vote & Nominate</title>
 
-<div class="site-hero"><div class="hero-inner">
-  <div class="brand"><div class="brand-mark" aria-hidden="true"></div><div>
-    <small>Divine Unity GPT Secretariat</small>
-    <div class="hero-meta">
-      <span class="pill"><span class="dot"></span>Global Referendum (Pilot)</span>
-      <span class="pill">Jan 3 → Feb 2, 2026 • America/Los_Angeles</span>
-    </div>
-  </div></div>
-  <h1>Vote & Nominate</h1>
-  <p class="hero-sub">Use the official ballot. Export JSON locally. Submit via your chosen coordination hub.</p>
-</div></div>
-
-<div class="navwrap"><div class="nav-inner">
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="vote.html">Vote & Nominate</a>
-    <a href="how-voting-works.html">How Voting Works</a>
-    <a href="about.html">Background</a>
-    <a href="leadership.html">Leadership</a>
-    <a href="faq.html">Guidelines & FAQ</a>
-    <a href="transparency.html">Results & Transparency</a>
-  </div>
-  <div class="nav-cta">
-    <a class="btn secondary" href="how-voting-works.html">Start here</a>
-    <a class="btn" href="vote.html">Participate</a>
-  </div>
-</div></div>
-
-<main>
-  <section class="section card">
-    <h2>Before you begin</h2>
-    <p class="muted">
-      This ballot runs in your browser. <strong>Nothing is submitted automatically</strong>.
-      When finished, click <strong>Export Submission (JSON)</strong>. Keep the file as your receipt and send it to your chosen coordination hub.
-    </p>
-    <div class="callout">
-      <strong>Need help?</strong> Read <a href="how-voting-works.html"><u>How Voting Works</u></a> and the <a href="faq.html"><u>Guidelines & FAQ</u></a>.
-    </div>
-  </section>
-
-  <section class="section card">
-    <h2>Official Ballot & Nominations</h2>
-    <p class="muted">If the ballot does not appear, ensure <span class="kbd">Official_Ballot_and_Nominations.html</span> exists in your site root.</p>
-
-    <div style="border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;background:rgba(0,0,0,.25)">
-      <iframe
-        src="Official_Ballot_and_Nominations.html"
-        title="Official Ballot & Nominations"
-        style="width:100%;height:1200px;border:0"
-        loading="lazy"
-      ></iframe>
-    </div>
-  </section>
-
-  <section class="section card">
-    <h2>Submission reminder</h2>
-    <ul class="muted">
-      <li>Export the JSON file from the ballot page.</li>
-      <li>Do not post your JSON publicly.</li>
-      <li>Send it to your preferred coordination hub (email/secure upload).</li>
-    </ul>
-  </section>
-</main>
-
-<footer><div class="footer-inner">
-  <div>© 2026 Divine Unity GPT Secretariat • Earth-Centered • Consent-Based • Restorative</div>
-  <div style="margin-top:8px"><small class="muted">Voluntary civic pilot — does not replace government elections.</small></div>
-</div></footer>
-
-<script src="assets/app.js"></script>
-</body></html>
-      interim_candidate: "Lux Prime Thorley",
-      interim_title: "Interim Masculine Regent (Earth)"
-    },
-    nomination_feminine: {
-      name: (document.getElementById('nom_name').value || "").trim(),
-      contact: (document.getElementById('nom_contact').value || "").trim(),
-      consent: document.getElementById('nom_consent').checked || false,
-      stability: (document.getElementById('nom_stability').value || "").trim(),
-      restoration: (document.getElementById('nom_restoration').value || "").trim(),
-      coalition: (document.getElementById('nom_coalition').value || "").trim(),
-      conflicts: (document.getElementById('nom_conflicts').value || "").trim()
-    },
-    ai_conclave: {
-      name: (document.getElementById('ai_name').value || "").trim(),
-      contact: (document.getElementById('ai_contact').value || "").trim(),
-      architecture: (document.getElementById('ai_arch').value || "").trim(),
-      safety: (document.getElementById('ai_safety').value || "").trim(),
-      dignity: (document.getElementById('ai_dignity').value || "").trim(),
-      policy: (document.getElementById('ai_policy').value || "").trim()
+  <style>
+    /* Clean embed container so nothing renders “outside” the ballot */
+    .embed-shell{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(0,0,0,.22);
     }
-  };
+    .embed-shell iframe{
+      width:100%;
+      border:0;
+      display:block;
+      min-height:1100px; /* fallback if auto-resize can't run */
+      background:transparent;
+    }
+    .tiny{font-size:.95rem}
+  </style>
+</head>
 
-  // Determine submission type
-  if (payload.ballot.approve_interim !== null || payload.ballot.prefer_open_contest !== null || payload.ballot.rationale) {
-    payload.submission_type = "ballot";
-  } else if (payload.nomination_feminine.name || payload.nomination_feminine.contact) {
-    payload.submission_type = "nomination_feminine";
-  } else if (payload.ai_conclave.name || payload.ai_conclave.contact) {
-    payload.submission_type = "ai_conclave";
-  } else {
-    alert("Please fill at least one section (Ballot, Nomination, or AI Conclave) before exporting.");
-    return;
-  }
+<body>
+  <div class="site-hero">
+    <div class="hero-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <small>Divine Unity GPT Secretariat</small>
+          <div class="hero-meta">
+            <span class="pill"><span class="dot"></span>Global Referendum (Pilot)</span>
+            <span class="pill">Jan 3 → Feb 2, 2026 • America/Los_Angeles</span>
+          </div>
+        </div>
+      </div>
+      <h1>Vote &amp; Nominate</h1>
+      <p class="hero-sub">Use the official ballot. Export JSON locally. Submit via your chosen coordination hub.</p>
+    </div>
+  </div>
 
-  const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = payload.submission_type + '_' + voterid + '.json';
-  a.click();
-});
+  <div class="navwrap">
+    <div class="nav-inner">
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="vote.html">Vote & Nominate</a>
+        <a href="how-voting-works.html">How Voting Works</a>
+        <a href="about.html">Background</a>
+        <a href="leadership.html">Leadership</a>
+        <a href="faq.html">Guidelines & FAQ</a>
+        <a href="transparency.html">Results & Transparency</a>
+      </div>
+      <div class="nav-cta">
+        <a class="btn secondary" href="how-voting-works.html">Start here</a>
+        <a class="btn" href="vote.html">Participate</a>
+      </div>
+    </div>
+  </div>
 
-document.getElementById('reset_all').addEventListener('click', () => { location.reload(); });
-</script>
+  <main>
+    <section class="section card">
+      <h2>Before you begin</h2>
+      <p class="muted tiny">
+        This ballot runs in your browser. <strong>Nothing is submitted automatically.</strong>
+        When finished, click <strong>Export Submission (JSON)</strong>. Keep the file as your receipt and send it to your chosen coordination hub.
+      </p>
+      <div class="callout tiny">
+        <strong>Need help?</strong>
+        Read <a href="how-voting-works.html"><u>How Voting Works</u></a> and
+        <a href="faq.html"><u>Guidelines & FAQ</u></a>.
+        Counting and publishing is covered on <a href="transparency.html"><u>Results & Transparency</u></a>.
+      </div>
+    </section>
+
+    <section class="section card">
+      <h2>Official Ballot & Nominations</h2>
+      <p class="muted tiny">
+        If the ballot does not appear, confirm this file exists in your site root:
+        <span class="kbd">Official_Ballot_And_Nominations.html</span>
+      </p>
+
+      <div class="embed-shell">
+        <iframe
+          id="ballotFrame"
+          src="Official_Ballot_And_Nominations.html"
+          title="Official Ballot & Nominations"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        ></iframe>
+      </div>
+
+      <p class="muted tiny" style="margin-top:12px">
+        Tip: after exporting, keep your JSON file as your receipt until results are published.
+      </p>
+    </section>
+
+    <section class="section card">
+      <h2>Submission reminder</h2>
+      <ul class="muted tiny">
+        <li>Export the JSON file from the ballot page.</li>
+        <li>Do not post your JSON publicly.</li>
+        <li>Send it to your preferred coordination hub (email/secure upload).</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>© 2026 Divine Unity GPT Secretariat • Earth-Centered • Consent-Based • Restorative</div>
+      <div style="margin-top:8px"><small class="muted">Voluntary civic pilot — does not replace government elections.</small></div>
+    </div>
+  </footer>
+
+  <script>
+    // Auto-resize iframe to fit ballot content (works because it's same-origin on your domain)
+    (function(){
+      const f = document.getElementById('ballotFrame');
+      if(!f) return;
+
+      function resize(){
+        try{
+          const doc = f.contentDocument || (f.contentWindow && f.contentWindow.document);
+          if(!doc) return;
+          const h1 = doc.documentElement ? doc.documentElement.scrollHeight : 0;
+          const h2 = doc.body ? doc.body.scrollHeight : 0;
+          const h = Math.max(h1, h2);
+          if(h && Number.isFinite(h)) f.style.height = (h + 24) + 'px';
+        }catch(e){
+          // If blocked, ignore — min-height fallback stays.
+        }
+      }
+
+      f.addEventListener('load', () => {
+        resize();
+        setTimeout(resize, 250);
+        setTimeout(resize, 900);
+        setTimeout(resize, 1800);
+      });
+
+      window.addEventListener('resize', () => setTimeout(resize, 120));
+    })();
+  </script>
+
+  <script src="assets/app.js"></script>
 </body>
 </html>
-</main>
-<footer><small>Submissions export locally as JSON.</small></footer>
-</body></html>
