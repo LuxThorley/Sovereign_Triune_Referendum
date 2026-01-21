@@ -299,6 +299,7 @@
 
 <script>
 (function(){
+  const API_BASE = "https://sovereign-vote.oliverluxthorley.workers.dev";
   const $ = (id)=>document.getElementById(id);
 
   function uuidv4(){
@@ -308,6 +309,12 @@
     a[8] = (a[8] & 0x3f) | 0x80;
     const hex = [...a].map(b=>b.toString(16).padStart(2,'0'));
     return `${hex.slice(0,4).join('')}-${hex.slice(4,6).join('')}-${hex.slice(6,8).join('')}-${hex.slice(8,10).join('')}-${hex.slice(10,16).join('')}`;
+  }
+
+  async function sha256(str){
+    const data = new TextEncoder().encode(str);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,"0")).join("");
   }
 
   function getVoterId(){
@@ -321,6 +328,7 @@
 
   function setStatus(msg){
     const s = $("status");
+    if(!s) return;
     s.style.display = "block";
     s.innerHTML = msg;
   }
@@ -329,11 +337,11 @@
 
   function validateRequired(){
     const missing = [];
-    if(!$("region").value) missing.push("World Region");
-    if(!$("country").value.trim()) missing.push("Country/Territory");
-    if(!$("age").value) missing.push("Age band");
-    if(!$("optin").value) missing.push("Participation mode");
-    if(!$("consent").checked) missing.push("Consent checkbox");
+    if(!$("region")?.value) missing.push("World Region");
+    if(!$("country")?.value?.trim()) missing.push("Country/Territory");
+    if(!$("age")?.value) missing.push("Age band");
+    if(!$("optin")?.value) missing.push("Participation mode");
+    if(!$("consent")?.checked) missing.push("Consent checkbox");
     return missing;
   }
 
@@ -341,23 +349,23 @@
     const voterId = getVoterId();
     const ts = nowISO();
 
-    const approve = $("approveInterim").checked;
-    const prefer = $("preferOpen").checked;
+    const approve = !!$("approveInterim")?.checked;
+    const prefer  = !!$("preferOpen")?.checked;
 
     const fem = {
-      candidate_name: $("fName").value.trim() || null,
-      candidate_location: $("fCountry").value.trim() || null,
-      consent_confirmed: $("fConsent").checked,
-      evidence: $("fEvidence").value.trim() || null,
-      public_contact_route: $("fContact").value.trim() || null
+      candidate_name: ($("fName")?.value || "").trim() || null,
+      candidate_location: ($("fCountry")?.value || "").trim() || null,
+      consent_confirmed: !!$("fConsent")?.checked,
+      evidence: ($("fEvidence")?.value || "").trim() || null,
+      public_contact_route: ($("fContact")?.value || "").trim() || null
     };
 
     const ai = {
-      system_name: $("aiName").value.trim() || null,
-      type: $("aiType").value || null,
-      requested_role: $("aiRole").value || null,
-      commitments: $("aiCommitments").value.trim() || null,
-      governance_policy: $("aiGovernance").value.trim() || null
+      system_name: ($("aiName")?.value || "").trim() || null,
+      type: $("aiType")?.value || null,
+      requested_role: $("aiRole")?.value || null,
+      commitments: ($("aiCommitments")?.value || "").trim() || null,
+      governance_policy: ($("aiGovernance")?.value || "").trim() || null
     };
 
     return {
@@ -365,75 +373,129 @@
       created_utc: ts,
       voter_id: voterId,
       context: {
-        region: $("region").value,
-        country_or_territory: $("country").value.trim(),
-        age_band: $("age").value,
-        participation_mode: $("optin").value
+        region: $("region")?.value,
+        country_or_territory: ($("country")?.value || "").trim(),
+        age_band: $("age")?.value,
+        participation_mode: $("optin")?.value
       },
       declarations: {
-        voluntary_participation: $("consent").checked,
+        voluntary_participation: !!$("consent")?.checked,
         no_personal_data_recommendation: true
       },
       ballot_track_a: {
         approve_interim_masculine_regent: approve,
         prefer_open_contest_in_approx_90_days: prefer,
-        comment: $("ballotComment").value.trim() || null
+        comment: ($("ballotComment")?.value || "").trim() || null
       },
       nomination_feminine_regent: fem,
       third_ai_conclave: ai
     };
   }
 
-  function downloadJSON(obj){
+  function downloadJSON(obj, filename){
     const blob = new Blob([JSON.stringify(obj, null, 2)], {type:"application/json"});
     const a = document.createElement("a");
-    const safeCountry = (obj.context.country_or_territory || "Unknown")
-      .replace(/[^a-z0-9\- _]/gi,'').trim().slice(0,24) || "Unknown";
-    const fname = `EGLV_Submission_${safeCountry}_${obj.voter_id.slice(0,8)}.json`;
     a.href = URL.createObjectURL(blob);
-    a.download = fname;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 600);
   }
 
+  async function submitPayload(payload){
+    const res = await fetch(`${API_BASE}/api/submit`, {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(()=>null);
+    if(!res.ok || !data || !data.ok){
+      const msg = (data && (data.error || data.message)) || "SUBMIT_FAILED";
+      throw new Error(msg);
+    }
+    return data; // {ok, receipt_id, counted, message}
+  }
+
   function init(){
-    $("voterId").textContent = getVoterId();
-    $("ts").textContent = new Date().toLocaleString();
+    // If these elements exist in your themed ballot, populate them:
+    const vidEl = $("voterId");
+    const tsEl  = $("ts");
+    if(vidEl) vidEl.textContent = getVoterId();
+    if(tsEl)  tsEl.textContent = new Date().toLocaleString();
 
-    $("exportBtn").addEventListener("click", ()=>{
-      const missing = validateRequired();
-      if(missing.length){
-        alert("Please complete the required items:\n\n• " + missing.join("\n• "));
-        return;
-      }
-      const payload = buildPayload();
-      downloadJSON(payload);
-      setStatus("✅ Export complete. Your JSON file has downloaded. Submit it to your chosen coordination hub as instructed on the website.");
-    });
+    // Main submit button id (if yours is different, change here)
+    const submitBtn = $("exportBtn");
+    if(submitBtn){
+      submitBtn.textContent = "Submit Vote Securely";
+      submitBtn.addEventListener("click", async ()=>{
+        const missing = validateRequired();
+        if(missing.length){
+          alert("Please complete the required items:\n\n• " + missing.join("\n• "));
+          return;
+        }
 
-    $("resetBtn").addEventListener("click", ()=>{
-      if(confirm("Reset all fields? (VoterID will remain the same.)")){
-        document.querySelectorAll("input[type=text], textarea").forEach(el=>el.value="");
-        document.querySelectorAll("input[type=checkbox]").forEach(el=>{ if(el.id!=="consent") el.checked=false; });
-        document.querySelectorAll("select").forEach(el=>el.value="");
-        $("status").style.display="none";
-      }
-    });
+        const payload = buildPayload();
 
-    $("regenBtn").addEventListener("click", ()=>{
-      if(confirm("Regenerate VoterID? This may cause your submission to be treated as a new unique entry. Continue?")){
-        const id = uuidv4();
-        localStorage.setItem("EGLV_VOTER_ID", id);
-        $("voterId").textContent = id;
-        setStatus("⚠️ New VoterID generated. If you already submitted once, coordinate with your hub to avoid duplicates.");
-      }
-    });
+        try{
+          const receipt = await submitPayload(payload);
+
+          const payloadHash = await sha256(JSON.stringify(payload));
+          const receiptObj = {
+            receipt_id: receipt.receipt_id,
+            received_utc: nowISO(),
+            counted: !!receipt.counted,
+            schema_version: payload.schema_version,
+            payload_sha256: payloadHash,
+            api: `${API_BASE}/api/submit`
+          };
+
+          setStatus(
+            `✅ Submission received.<br/>` +
+            `Receipt ID: <span class="mono">${receipt.receipt_id}</span><br/>` +
+            `Counted: <strong>${receipt.counted ? "Yes" : "No (duplicate)"}</strong>`
+          );
+
+          // Auto-download receipt JSON (your requested proof/fallback)
+          downloadJSON(receiptObj, `EGLV_Receipt_${receipt.receipt_id}.json`);
+
+        }catch(e){
+          // Fallback: manual export of full payload if live submit fails
+          alert("⚠️ Live submission failed (network/server). A manual submission file will download now. Please keep it as your receipt.");
+          downloadJSON(payload, `EGLV_Submission_${payload.voter_id.slice(0,8)}.json`);
+        }
+      });
+    }
+
+    // Reset buttons if present
+    const resetBtn = $("resetBtn");
+    if(resetBtn){
+      resetBtn.addEventListener("click", ()=>{
+        if(confirm("Reset all fields? (VoterID will remain the same.)")){
+          document.querySelectorAll("input[type=text], textarea").forEach(el=>el.value="");
+          document.querySelectorAll("input[type=checkbox]").forEach(el=>{ if(el.id!=="consent") el.checked=false; });
+          document.querySelectorAll("select").forEach(el=>el.value="");
+          const s = $("status"); if(s) s.style.display="none";
+        }
+      });
+    }
+
+    const regenBtn = $("regenBtn");
+    if(regenBtn){
+      regenBtn.addEventListener("click", ()=>{
+        if(confirm("Regenerate VoterID? This may cause your submission to be treated as new. Continue?")){
+          const id = uuidv4();
+          localStorage.setItem("EGLV_VOTER_ID", id);
+          if($("voterId")) $("voterId").textContent = id;
+          setStatus("⚠️ New VoterID generated. If you already submitted once, coordinate with support to avoid duplicates.");
+        }
+      });
+    }
   }
 
   init();
 })();
 </script>
+
 
 <!-- Highlights the active nav item when viewed standalone -->
 <script src="assets/app.js"></script>
