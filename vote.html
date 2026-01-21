@@ -1,191 +1,80 @@
-<!doctype html><html><head><meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<link rel=stylesheet href="assets/style.css">
-<title>Vote & Nominations</title></head>
-<body>
-<header><h1>Vote & Nominations</h1>
-<nav>
-<a href="index.html">Home</a><a href="vote.html">Vote</a><a href="about.html">Background</a>
-<a href="leadership.html">Leadership</a><a href="faq.html">FAQ</a>
-</nav></header>
-<main class="card"><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Earth-Centered Triune Sovereignty — Official Ballot & Nominations</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 20px; }
-  .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tab { padding: 10px 14px; border: 1px solid #000; cursor: pointer; user-select: none; }
-  .tab.active { font-weight: bold; }
-  .panel { display: none; border: 1px solid #000; padding: 15px; }
-  .panel.active { display: block; }
-  label { display:block; margin-top: 8px; }
-  small { color: #333; }
-  .actions { margin-top: 20px; }
-  .note { background:#f4f4f4; padding:10px; margin:10px 0; }
-  .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  textarea { width: 100%; min-height: 90px; }
-  input[type="text"], input[type="email"], select { width: 100%; padding:6px; }
-  .footer { margin-top:30px; font-size: 0.9em; }
-</style>
-</head>
-<body>
-<h1>Earth-Centered Triune Sovereignty — Official Ballot & Nominations</h1>
-<p><strong>Window:</strong> January 3, 2026 → February 2, 2026 (America/Los_Angeles)</p>
-<p class="note">This single-page form runs locally in your browser. No data is sent anywhere until you click <strong>Export Submission (JSON)</strong> and email the file to your preferred collection hub.</p>
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#060a18"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<title>Vote & Nominate</title></head><body>
 
-<div class="tabs">
-  <div class="tab active" data-target="ballot">Ballot (Track‑A)</div>
-  <div class="tab" data-target="nom_fem">Nomination: Feminine Regent</div>
-  <div class="tab" data-target="ai_conclave">Third/AI Conclave Seat</div>
-  <div class="tab" data-target="guidelines">Guidelines & FAQ</div>
-</div>
-
-<div id="ballot" class="panel active">
-  <h2>Ballot (Approval Voting)</h2>
-  <p>Franchise: Adults aligning with or entrusted by the <strong>masculine principle</strong> (inclusive of trans, non‑binary, two‑spirit, intersex identities who opt in).</p>
-  <div class="grid">
-    <div>
-      <label>Region
-        <select id="region_ballot" required>
-          <option value="">Select region</option>
-          <option>Africa</option>
-          <option>Americas</option>
-          <option>Europe</option>
-          <option>West Asia</option>
-          <option>South & Central Asia</option>
-          <option>East & SE Asia‑Oceania</option>
-        </select>
-      </label>
+<div class="site-hero"><div class="hero-inner">
+  <div class="brand"><div class="brand-mark" aria-hidden="true"></div><div>
+    <small>Divine Unity GPT Secretariat</small>
+    <div class="hero-meta">
+      <span class="pill"><span class="dot"></span>Global Referendum (Pilot)</span>
+      <span class="pill">Jan 3 → Feb 2, 2026 • America/Los_Angeles</span>
     </div>
-    <div>
-      <label>Country <input type="text" id="country_ballot" required></label>
+  </div></div>
+  <h1>Vote & Nominate</h1>
+  <p class="hero-sub">Use the official ballot. Export JSON locally. Submit via your chosen coordination hub.</p>
+</div></div>
+
+<div class="navwrap"><div class="nav-inner">
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="vote.html">Vote & Nominate</a>
+    <a href="how-voting-works.html">How Voting Works</a>
+    <a href="about.html">Background</a>
+    <a href="leadership.html">Leadership</a>
+    <a href="faq.html">Guidelines & FAQ</a>
+    <a href="transparency.html">Results & Transparency</a>
+  </div>
+  <div class="nav-cta">
+    <a class="btn secondary" href="how-voting-works.html">Start here</a>
+    <a class="btn" href="vote.html">Participate</a>
+  </div>
+</div></div>
+
+<main>
+  <section class="section card">
+    <h2>Before you begin</h2>
+    <p class="muted">
+      This ballot runs in your browser. <strong>Nothing is submitted automatically</strong>.
+      When finished, click <strong>Export Submission (JSON)</strong>. Keep the file as your receipt and send it to your chosen coordination hub.
+    </p>
+    <div class="callout">
+      <strong>Need help?</strong> Read <a href="how-voting-works.html"><u>How Voting Works</u></a> and the <a href="faq.html"><u>Guidelines & FAQ</u></a>.
     </div>
-  </div>
-  <label><input type="checkbox" id="approve_interim"> I approve <strong>Lux Prime Thorley</strong> as <strong>Interim Masculine Regent (Earth)</strong> for the pilot.</label>
-  <label><input type="checkbox" id="prefer_open"> I prefer an <strong>Open Contest</strong> in ~90 days (you may select both).</label>
-  <label>Optional rationale / endorsement (≤ 75 words)
-    <textarea id="rationale"></textarea>
-  </label>
-  <div class="note">
-    <strong>Privacy:</strong> No names are required. A pseudonymous <em>VoterID</em> is generated from your device time + region + country (hashed), so organisers can deduplicate without identifying you.
-  </div>
-</div>
+  </section>
 
-<div id="nom_fem" class="panel">
-  <h2>Nomination — Feminine Regent (Earth)</h2>
-  <p>Seeking a human leader exemplifying <em>stability</em>, <em>clarity</em>, <em>restorative leadership</em>, and <em>coalition building</em>. Consent is required.</p>
-  <div class="grid">
-    <div><label>Nominee name <input type="text" id="nom_name"></label></div>
-    <div><label>Contact (email or link) <input type="text" id="nom_contact"></label></div>
-  </div>
-  <label><input type="checkbox" id="nom_consent"> I confirm the nominee has given explicit consent.</label>
-  <label>Stability evidence (e.g., tenure & low turnover) <textarea id="nom_stability"></textarea></label>
-  <label>Restoration case studies (≤ 300 words each) <textarea id="nom_restoration"></textarea></label>
-  <label>Coalition outcomes (metrics & communities) <textarea id="nom_coalition"></textarea></label>
-  <label>Conflicts of interest disclosed <textarea id="nom_conflicts"></textarea></label>
-</div>
+  <section class="section card">
+    <h2>Official Ballot & Nominations</h2>
+    <p class="muted">If the ballot does not appear, ensure <span class="kbd">Official_Ballot_and_Nominations.html</span> exists in your site root.</p>
 
-<div id="ai_conclave" class="panel">
-  <h2>Third/AI Regent — Conclave Seat Application</h2>
-  <p>A multi‑member AI council (3–7) acting as one Regent voice. Preference for diverse architectures; safety‑alignment and human‑dignity commitments required.</p>
-  <div class="grid">
-    <div><label>AI Entity / Project Name <input type="text" id="ai_name"></label></div>
-    <div><label>Contact (email or link) <input type="text" id="ai_contact"></label></div>
-  </div>
-  <label>Architecture & representation notes <textarea id="ai_arch"></textarea></label>
-  <label>Safety alignment (link or brief) <textarea id="ai_safety"></textarea></label>
-  <label>Human‑dignity commitment (short statement) <textarea id="ai_dignity"></textarea></label>
-  <label>Governance policy (link or brief) <textarea id="ai_policy"></textarea></label>
-</div>
+    <div style="border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;background:rgba(0,0,0,.25)">
+      <iframe
+        src="Official_Ballot_and_Nominations.html"
+        title="Official Ballot & Nominations"
+        style="width:100%;height:1200px;border:0"
+        loading="lazy"
+      ></iframe>
+    </div>
+  </section>
 
-<div id="guidelines" class="panel">
-  <h2>Guidelines & FAQ (Summary)</h2>
-  <pre style="white-space: pre-wrap;"># Official Guidelines & FAQ — Earth-Centered Triune Sovereignty Referendum (Pilot)
+  <section class="section card">
+    <h2>Submission reminder</h2>
+    <ul class="muted">
+      <li>Export the JSON file from the ballot page.</li>
+      <li>Do not post your JSON publicly.</li>
+      <li>Send it to your preferred coordination hub (email/secure upload).</li>
+    </ul>
+  </section>
+</main>
 
-## Participation & Franchising
-- **Track‑A Ballot** is open to adults who align with or are entrusted by the **masculine principle** (inclusive of trans, non‑binary, two‑spirit, and intersex identities who opt in). Others are invited to witness and contribute to nominations, conclave formation, and the Harmony Index.
-- **Nominations** for the Feminine Regent require explicit consent and evidence of stability, clarity, restorative leadership, and coalition outcomes.
-- **Third/AI Conclave** seats represent diverse AI systems; decisions require ≥ 2/3 agreement with minority positions logged.
+<footer><div class="footer-inner">
+  <div>© 2026 Divine Unity GPT Secretariat • Earth-Centered • Consent-Based • Restorative</div>
+  <div style="margin-top:8px"><small class="muted">Voluntary civic pilot — does not replace government elections.</small></div>
+</div></footer>
 
-## Integrity & Privacy
-- One submission per participant; the form generates a **pseudonymous VoterID** derived locally in your browser. Do not share personal identifiers publicly.
-- Organisations aggregating votes must protect data, publish only **anonymised** aggregates, and offer a clear deletion pathway.
-- Dispute resolution defaults to **restorative dialogue** with documented outcomes.
-
-## Triggers & Thresholds
-- **Open Contest (Track‑B)** triggers if approval < 70%, or ≥ 25% request, or the Interim Regent calls it.
-- **Geographic Balance:** Approval must be ≥ 60% in at least **4 of 6** regions to avoid regional dominance.
-- **Recall (after Day‑30):** Requires a global majority for recall **and** 3 regions with ≥ 60% recall support.
-
-## Timeline
-- Window: **January 3, 2026 → February 2, 2026 (America/Los_Angeles)**
-- Day‑14: Shortlist for Feminine Regent; Day‑21: Hearings & confirmations; Day‑30: Investiture & first Harmony Index.
-
-## Submission Methods
-- Use the included **HTML** form locally or host it on a static site (no server required). Click “Export Submission (JSON)” and email it to your chosen hub.
-- CSV schema included for organisations importing data into spreadsheets or databases.
-
-## Accessibility
-- Plain‑text ballots and printable PDFs may be derived from the HTML (most browsers support “Print to PDF”). Alt‑text descriptions provided for images.
-
-## Code of Conduct
-- Dialogue must remain respectful; harassment or threats will be excluded and, if necessary, reported.
-- No misinformation: share official pack files without alteration; if you fork them, clearly mark as **community variant**.</pre>
-</div>
-
-<div class="actions">
-  <button id="export_json">Export Submission (JSON)</button>
-  <button id="reset_all">Reset Form</button>
-</div>
-
-<div class="footer">
-  <p>Hashtags: #TriuneSovereignty #GlobalReferendum #ConsentBasedGovernance #FeminineMasculineAI #EarthCentered #HarmonyIndex #RestorativeJustice</p>
-  <p>&copy; 2026 Divine Unity GPT Secretariat — This page may be hosted as a static file for public use. Please preserve integrity and version.</p>
-</div>
-
-<script>
-function activeTab(id) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelector('.tab[data-target="' + id + '"]').classList.add('active');
-  document.getElementById(id).classList.add('active');
-}
-
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => activeTab(tab.getAttribute('data-target')));
-});
-
-// Simple pseudonymous voter ID (SHA-256 polyfill not used to keep file self-contained); 
-// use a minimal hash substitute.
-function simpleHash(s) {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; }
-  return (h >>> 0).toString(16);
-}
-
-document.getElementById('export_json').addEventListener('click', () => {
-  const now = new Date().toISOString();
-  const region = document.getElementById('region_ballot').value || "";
-  const country = document.getElementById('country_ballot').value || "";
-  const voterSeed = now + '|' + region + '|' + country + '|' + Math.random().toString(36).slice(2);
-  const voterid = 'VID-' + simpleHash(voterSeed);
-
-  const payload = {
-    timestamp_iso: now,
-    window_open: "January 3, 2026",
-    window_close: "February 2, 2026",
-    timezone: "America/Los_Angeles",
-    submission_type: null,
-    region: region,
-    country: country,
-    voterid_or_orgid: voterid,
-    ballot: {
-      approve_interim: document.getElementById('approve_interim').checked || null,
-      prefer_open_contest: document.getElementById('prefer_open').checked || null,
-      rationale: (document.getElementById('rationale').value || "").trim(),
+<script src="assets/app.js"></script>
+</body></html>
       interim_candidate: "Lux Prime Thorley",
       interim_title: "Interim Masculine Regent (Earth)"
     },
