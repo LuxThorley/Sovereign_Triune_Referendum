@@ -9,11 +9,11 @@
     <small>Divine Unity GPT Secretariat</small>
     <div class="hero-meta">
       <span class="pill"><span class="dot"></span>Global Referendum (Pilot)</span>
-      <span class="pill">Jan 3 → Feb 2, 2026 • America/Los_Angeles</span>
+      <span class="pill">Live counting • Anonymised aggregates</span>
     </div>
   </div></div>
   <h1>Results & Transparency</h1>
-  <p class="hero-sub">How results are counted and published — with a live summary that auto-renders from results.json.</p>
+  <p class="hero-sub">Live totals are fetched from the official counting service. We publish aggregates, not identities.</p>
 </div></div>
 
 <div class="navwrap"><div class="nav-inner">
@@ -37,29 +37,21 @@
     <h2>Transparency principles</h2>
     <div class="callout"><strong>Publish aggregates, not identities.</strong> Transparency means clear methods and totals — not exposing individuals.</div>
     <ul class="muted">
-      <li>We publish: totals, rates, thresholds, method notes, Harmony Index snapshots.</li>
-      <li>We do not publish: raw submissions or personal identifiers.</li>
+      <li>We publish: totals, rates, thresholds, and methodology.</li>
+      <li>We do not publish: raw submissions, personal identifiers, or contact routes.</li>
     </ul>
   </section>
 
   <section class="section card">
     <h2>Live Summary</h2>
-    <p class="muted"><span class="badge">Auto-loads from results.json</span></p>
-    <div id="resultsBox" class="callout">No results published yet.</div>
+    <p class="muted"><span class="badge">Auto-refreshes every 15 seconds</span></p>
+    <div id="resultsBox" class="callout">Loading live results…</div>
     <div id="regionalBox" style="margin-top:14px"></div>
+    <div id="techBox" class="muted" style="margin-top:10px;font-size:.92rem"></div>
   </section>
 
   <section class="section card">
-    <h2>Recommended counting method</h2>
-    <ol class="muted">
-      <li>Collect JSON submissions via email or secure upload.</li>
-      <li>Validate structure and window compatibility.</li>
-      <li>Deduplicate using pseudonymous VoterID plus review.</li>
-      <li>Compute totals and regional approval rates.</li>
-      <li>Publish anonymised aggregates and update <span class="kbd">results.json</span>.</li>
-    </ol>
-    <hr/>
-    <h3>Threshold reminders</h3>
+    <h2>Threshold reminders</h2>
     <ul class="muted">
       <li><strong>Contest trigger:</strong> approval &lt;70% OR ≥25% prefer contest OR Regent calls it.</li>
       <li><strong>Regional balance:</strong> approval ≥60% in ≥4 of 6 regions.</li>
@@ -67,47 +59,51 @@
   </section>
 
   <section class="section card">
-    <h2>Admin: publish results on this site</h2>
+    <h2>Counting method (high level)</h2>
     <ol class="muted">
-      <li>Edit <span class="kbd">results.json</span> in the site root.</li>
-      <li>Upload/replace it on the server.</li>
-      <li>Refresh this page — it auto-renders your totals.</li>
+      <li>Submissions are validated for required fields and window compatibility.</li>
+      <li>Deduplication is applied using a pseudonymous key (no names required).</li>
+      <li>Aggregates are updated deterministically.</li>
+      <li>Only anonymised totals and rates are published to this page.</li>
     </ol>
   </section>
 </main>
 
 <script>
+const RESULTS_URL = "https://sovereign-vote.oliverluxthorley.workers.dev/api/results";
+
 async function loadResults(){
   try{
-    const res = await fetch('results.json', {cache:'no-store'});
-    if(!res.ok) throw new Error('no results');
+    const res = await fetch(RESULTS_URL, { cache:"no-store" });
+    if(!res.ok) throw new Error("Results fetch failed");
     const data = await res.json();
+
     const b = data.ballot || {};
-    const last = data.last_updated_utc || '—';
+    const last = data.last_updated_utc || "—";
+    const total = b.total_submissions_counted ?? "—";
+    const approve = b.approve_interim_yes ?? "—";
+    const prefer = b.prefer_open_contest_yes ?? "—";
+    const both = b.both_selected ?? "—";
+    const neither = b.neither_selected ?? "—";
+    const appr = (b.approval_rate_percent==null) ? "—" : (b.approval_rate_percent + "%");
+    const pref = (b.prefer_open_rate_percent==null) ? "—" : (b.prefer_open_rate_percent + "%");
 
-    const total = b.total_submissions_counted ?? '—';
-    const approve = b.approve_interim_yes ?? '—';
-    const prefer = b.prefer_open_contest_yes ?? '—';
-    const both = b.both_selected ?? '—';
-
-    const appr = (b.approval_rate_percent==null) ? '—' : (b.approval_rate_percent + '%');
-    const pref = (b.prefer_open_rate_percent==null) ? '—' : (b.prefer_open_rate_percent + '%');
-
-    document.getElementById('resultsBox').innerHTML = `
+    document.getElementById("resultsBox").innerHTML = `
       <strong>Last updated (UTC):</strong> ${last}<br/>
       <strong>Submissions counted:</strong> ${total}<br/>
       <strong>Approve Interim (Yes):</strong> ${approve} (${appr})<br/>
       <strong>Prefer Open Contest (Yes):</strong> ${prefer} (${pref})<br/>
-      <strong>Both selected:</strong> ${both}
+      <strong>Both selected:</strong> ${both}<br/>
+      <strong>Neither selected:</strong> ${neither}
     `;
 
     const rows = (data.regional_balance||[]).map(r=>{
-      const rate = (r.approve_rate_percent==null) ? '—' : (r.approve_rate_percent + '%');
-      const cnt = (r.submissions_counted ?? '—');
-      return `<tr><td>${r.region||'—'}</td><td>${cnt}</td><td>${rate}</td></tr>`;
-    }).join('');
+      const rate = (r.approve_rate_percent==null) ? "—" : (r.approve_rate_percent + "%");
+      const cnt = (r.submissions_counted ?? "—");
+      return `<tr><td>${r.region||"—"}</td><td>${cnt}</td><td>${rate}</td></tr>`;
+    }).join("");
 
-    document.getElementById('regionalBox').innerHTML = `
+    document.getElementById("regionalBox").innerHTML = `
       <h3 style="margin-top:0">Regional balance</h3>
       <table class="table">
         <thead><tr><th>Region</th><th>Counted</th><th>Approve rate</th></tr></thead>
@@ -115,9 +111,18 @@ async function loadResults(){
       </table>
       <p style="margin-top:10px" class="muted"><small>Threshold reminder: approval must be ≥60% in at least 4 of 6 regions.</small></p>
     `;
-  }catch(e){}
+
+    document.getElementById("techBox").innerHTML = `
+      <span class="muted">Source:</span> <span class="kbd">${RESULTS_URL.replace("https://","")}</span>
+    `;
+  }catch(e){
+    document.getElementById("resultsBox").innerHTML = `⚠️ Unable to load live results right now. Please refresh.`;
+    document.getElementById("techBox").innerHTML = `<span class="muted">Error:</span> ${e.message || e}`;
+  }
 }
+
 loadResults();
+setInterval(loadResults, 15000);
 </script>
 
 <footer><div class="footer-inner">
